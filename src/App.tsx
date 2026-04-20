@@ -4,7 +4,6 @@ import ScoreCard from "./components/ScoreCard";
 import SkillsCard from "./components/SkillsCard";
 import SuggestionsCard from "./components/SuggestionsCard";
 import type { AnalysisResult } from "./types/analysis";
-import { analyzeResumeMatch } from "./services/mockAnalyzer";
 import KeywordTable from "./components/KeywordTable";
 
 function App() {
@@ -15,31 +14,46 @@ function App() {
   const [error, setError] = useState("");
 
   const handleAnalyze = async () => {
-    setError("");
-    setResult(null);
+  setError("");
+  setResult(null);
 
-    if (!resumeText.trim()) {
-      setError("Resume text is required.");
-      return;
+  if (!resumeText.trim()) {
+    setError("Resume text is required.");
+    return;
+  }
+
+  if (!jobDescription.trim()) {
+    setError("Job description is required.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await fetch("/api/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        resumeText,
+        jobDescription,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Analysis failed");
     }
 
-    if (!jobDescription.trim()) {
-      setError("Job description is required.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      const analysis = analyzeResumeMatch(resumeText, jobDescription);
-      setResult(analysis);
-    } catch {
-      setError("Something went wrong during analysis.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setResult(data);
+  } catch (err: any) {
+    setError(err.message || "Something went wrong during analysis.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-100 p-6">
