@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# 🚀 Resume Match Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered web application that analyzes how well a resume matches a job description and provides actionable insights to improve job fit.
 
-Currently, two official plugins are available:
+🔗 Live Demo: https://resume-match-dashboard.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 📌 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 📄 Upload Resume (PDF) or paste text
+- 🧠 AI-powered resume analysis using OpenAI
+- 📊 Match Score (0–100%)
+- ✅ Matching Skills Detection
+- ❌ Missing Skills Identification
+- 💡 Actionable Suggestions
+- 🔍 Keyword Coverage Breakdown
+- ⚡ Fast serverless backend (Vercel)
+- 🔄 CI/CD with GitHub Actions
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Frontend
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Backend
+- Vercel Serverless Functions
+- OpenAI API
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### DevOps
+- GitHub Actions (CI Pipeline)
+- Vercel (Deployment)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📸 Screenshots
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<img width="466" height="286" alt="image" src="https://github.com/user-attachments/assets/4b415096-0420-4006-82b1-95f183c8ee8c" />
+
+
+---
+
+## ⚙️ How It Works
+
+1. Upload a resume (PDF) or paste text
+2. Paste a job description
+3. Click **Analyze Match**
+4. The backend sends both inputs to OpenAI
+5. AI evaluates:
+   - Skill overlap
+   - Missing requirements
+   - Keyword coverage
+6. Results are displayed in structured cards
+
+---
+
+## 📂 Project Structure
+
+resume-match-dashboard/
+├── src/
+│ ├── components/
+│ ├── types/
+│ └── App.tsx
+├── api/
+│ └── analyze.ts
+├── public/
+├── .github/workflows/
+└── package.json
