@@ -5,6 +5,7 @@ import SkillsCard from "./components/SkillsCard";
 import SuggestionsCard from "./components/SuggestionsCard";
 import type { AnalysisResult } from "./types/analysis";
 import KeywordTable from "./components/KeywordTable";
+import { extractTextFromPDF } from "./utils/pdfParser.ts";
 
 function App() {
   const [resumeText, setResumeText] = useState("");
@@ -12,6 +13,39 @@ function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fileName, setFileName] = useState("");
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  
+
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("File too large (max 2MB).");
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setError("Please upload a PDF file.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const text = await extractTextFromPDF(file);
+      console.log("EXTRACTED TEXT:", text);
+      setResumeText(text);
+      setFileName(file.name);
+    } catch (err: any) {
+      console.error("PDF parse error:", err);
+      setError(err?.message || "Failed to read PDF.");
+    } finally {
+      setLoading(false);
+    }
+    };
 
   const handleAnalyze = async () => {
   setError("");
@@ -35,13 +69,17 @@ function App() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        resumeText,
-        jobDescription,
-      }),
+      body: JSON.stringify({ resumeText, jobDescription }),
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      throw new Error(`Backend did not return JSON: ${rawText}`);
+    }
 
     if (!response.ok) {
       throw new Error(data.error || "Analysis failed");
@@ -64,7 +102,7 @@ function App() {
         <p className="mb-6 text-slate-600">
           Compare your resume against a job description and identify gaps.
         </p>
-
+        
         <InputPanel
           resumeText={resumeText}
           setResumeText={setResumeText}
@@ -72,6 +110,8 @@ function App() {
           setJobDescription={setJobDescription}
           onAnalyze={handleAnalyze}
           loading={loading}
+          onFileUpload={handleFileUpload}
+          fileName={fileName}
         />
 
         {error && (

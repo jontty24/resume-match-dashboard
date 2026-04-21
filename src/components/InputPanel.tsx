@@ -5,6 +5,8 @@ type InputPanelProps = {
   setJobDescription: (value: string) => void;
   onAnalyze: () => void;
   loading: boolean;
+  onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileName: string;
 };
 
 function InputPanel({
@@ -14,6 +16,8 @@ function InputPanel({
   setJobDescription,
   onAnalyze,
   loading,
+  onFileUpload,
+  fileName,
 }: InputPanelProps) {
   return (
     <>
@@ -22,14 +26,34 @@ function InputPanel({
           <h2 className="mb-4 text-xl font-semibold text-slate-800">
             Resume Input
           </h2>
-          <input type="file" className="mb-4 block w-full" />
-          <textarea
-            className="w-full rounded border border-slate-300 p-3"
-            rows={8}
-            placeholder="Paste resume text here..."
-            value={resumeText}
-            onChange={(e) => setResumeText(e.target.value)}
-          />
+          <label className="mb-4 inline-block cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-white">
+                Upload Resume (PDF)
+                <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={onFileUpload}
+                    className="hidden"
+                />
+                </label>
+                {fileName && (
+                <p className="mb-2 text-sm text-slate-500">
+                    Uploaded file: {fileName}
+                </p>
+                )}
+
+                {resumeText && (
+                <p className="mb-4 text-sm text-green-600">
+                    Resume loaded successfully
+                </p>
+                )}
+
+                <textarea
+                className="w-full rounded border border-slate-300 p-3"
+                rows={8}
+                placeholder="Paste resume text here..."
+                value={resumeText}
+                onChange={(e) => setResumeText(e.target.value)}
+                />
         </div>
 
         <div className="rounded-xl bg-white p-5 shadow">

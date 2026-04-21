@@ -1,14 +1,12 @@
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-
+  const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+    });
   try {
     const { resumeText, jobDescription } = req.body;
 
@@ -38,8 +36,39 @@ SCORING RULES:
 - 60-74 = moderate match
 - 40-59 = weak match
 - 0-39 = poor match
-- Base the score on relevance, skill overlap, role fit, and missing critical requirements
 - Do not inflate the score without evidence from the resume
+
+SCORING LOGIC (STRICT):
+
+Evaluate based on weighted importance:
+
+- Core Skill Match (50% weight):
+  Does the resume match the primary domain? (e.g., frontend vs full stack)
+  
+- Secondary Skills (30% weight):
+  Tools like Node.js, AWS, TypeScript
+  
+- Experience & Context (20% weight):
+  APIs, Agile, real-world usage
+
+Rules:
+- Strong match in core skills MUST result in at least 60+
+- Missing secondary tools should NOT drop score below 55 if core skills match well
+- Only give scores below 50 if there is weak or no domain relevance
+- Do not over-penalize missing tools if the candidate clearly fits part of the role
+
+Examples:
+- Frontend dev vs full stack → 60–75
+- Strong full stack match → 85–100
+- Completely unrelated → 0–30
+
+Guidelines:
+- If 50–70% of requirements are met → score should be between 60–75
+- If only basic or indirect relevance → 30–50
+- If strong alignment with most requirements → 80+
+
+Do NOT penalize too harshly for missing tools if core skills are present.
+Do NOT give low scores when there is clear partial alignment.
 
 MATCHING RULES:
 - matchingSkills should include only skills, tools, or concepts clearly supported by the resume and relevant to the job
@@ -51,6 +80,8 @@ MATCHING RULES:
 - Be fair, accurate, and conservative when evidence is weak
 - Prefer professional recruiting language over generic wording
 - Avoid repeating the same idea across strengths, suggestions, and matchingSkills
+- Consider role proximity (e.g., frontend developer vs full-stack = moderate match, not poor)
+- If the candidate clearly matches one major part of the role, do not score below 60
 
 OUTPUT RULES:
 - Return ONLY valid JSON
