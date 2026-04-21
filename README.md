@@ -57,17 +57,4 @@ An AI-powered web application that analyzes how well a resume matches a job desc
    - Keyword coverage
 6. Results are displayed in structured cards
 
----
 
-## 📂 Project Structure
-
-resume-match-dashboard/
-├── src/
-│ ├── components/
-│ ├── types/
-│ └── App.tsx
-├── api/
-│ └── analyze.ts
-├── public/
-├── .github/workflows/
-└── package.json
